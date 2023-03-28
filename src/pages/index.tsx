@@ -50,6 +50,16 @@ export default function Home() {
             intervention.
           </p>
         </div>
+        <div id="github_link_div">
+          <a
+            href="https://github.com/awoldt/BotBook"
+            title="View source code"
+            id="github_link"
+            target={"_blank"}
+          >
+            <img src="/icons/github.svg" alt="github icon" /> View on GitHub
+          </a>
+        </div>
       </div>
     </>
   );

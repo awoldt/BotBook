@@ -129,7 +129,6 @@ code {
 }
 #homepage_about {
   margin-top: 50px;
-  margin-bottom: 50px;
 }
 .social-media-share-btn {
   cursor: pointer;
@@ -140,4 +139,11 @@ code {
 }
 .social-btn-link {
   text-decoration: none;
+}
+#github_link_div {
+  margin-bottom: 50px;
+}
+#github_link {
+  text-decoration: none;
+  color: grey
 }
