@@ -1,4 +1,4 @@
-//what is stored in mongodb
+//all the data stored for the word generated
 export interface Word {
   name: string;
   definition: string;
@@ -14,4 +14,13 @@ export interface Word {
 
 export interface SearchResults {
   name: string;
+}
+
+/* 
+All the data needed for the [word].tsx dynamic route
+contains data on word along with pagination data
+*/
+export interface WordPageData {
+  wordData: Word;
+  paginationLinks: string[];
 }

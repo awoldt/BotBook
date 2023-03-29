@@ -7,9 +7,11 @@ import Head from "next/head";
 export default function WordDefinitionPage({
   word,
   title,
+  paginationLinks,
 }: {
   word: Word;
   title: string;
+  paginationLinks: string[];
 }) {
   return (
     <>
@@ -21,10 +23,22 @@ export default function WordDefinitionPage({
               rel="canonical"
               href={`https://botbook.dev/word/${word.name}`}
             />
-            <meta name="description" content={`Learn what the word ${word.name} means along with examples, synonyms, antonyms, and images all generated using AI`}/>
-            <meta property="og:title" content={`${word.name}: Definition, images, and examples all generated using AI`} />
-            <meta property="og:description" content={`Learn what ${word.name} means along with other relevant information all generated with AI`} />
-            <meta property="og:image" content={`https://cdn.botbook.dev/${word.name}_0.png`} />  
+            <meta
+              name="description"
+              content={`Learn what the word ${word.name} means along with examples, synonyms, antonyms, and images all generated using AI`}
+            />
+            <meta
+              property="og:title"
+              content={`${word.name}: Definition, images, and examples all generated using AI`}
+            />
+            <meta
+              property="og:description"
+              content={`Learn what ${word.name} means along with other relevant information all generated with AI`}
+            />
+            <meta
+              property="og:image"
+              content={`https://cdn.botbook.dev/${word.name}_0.png`}
+            />
           </Head>
           <div className="container">
             <h1 id="word_title">
@@ -91,6 +105,47 @@ export default function WordDefinitionPage({
               })}
             </div>
 
+            {paginationLinks.length === 1 && word.name < paginationLinks[0] && (
+              <a
+                className="btn pagination-link pagination-rightside"
+                href={`/word/${paginationLinks[0]}`}
+              >
+                {paginationLinks[0].charAt(0).toUpperCase() +
+                  paginationLinks[0].slice(1)}{" "}
+                <img src="/icons/caret-right-fill.svg" />
+              </a>
+            )}
+            {paginationLinks.length === 1 && word.name > paginationLinks[0] && (
+              <a
+                className="btn pagination-link pagination-leftside"
+                href={`/word/${paginationLinks[0]}`}
+              >
+                <img src="/icons/caret-left-fill.svg" />{" "}
+                {paginationLinks[0].charAt(0).toUpperCase() +
+                  paginationLinks[0].slice(1)}{" "}
+              </a>
+            )}
+            {paginationLinks.length > 1 && (
+              <>
+                <a
+                  className="btn pagination-link pagination-leftside"
+                  href={`/word/${paginationLinks[0]}`}
+                >
+                  <img src="/icons/caret-left-fill.svg" />{" "}
+                  {paginationLinks[0].charAt(0).toUpperCase() +
+                    paginationLinks[0].slice(1)}{" "}
+                </a>
+                <a
+                  className="btn pagination-link pagination-rightside"
+                  href={`/word/${paginationLinks[1]}`}
+                >
+                  {paginationLinks[1].charAt(0).toUpperCase() +
+                    paginationLinks[1].slice(1)}{" "}
+                  <img src="/icons/caret-right-fill.svg" />
+                </a>
+              </>
+            )}
+
             <ShareBtns word={word.name} />
 
             <footer id="footer">
@@ -122,18 +177,23 @@ export default function WordDefinitionPage({
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const word = params!.word;
 
-  const wordData = await FetchWordData(String(word));
+  const data = await FetchWordData(String(word));
 
-  if (wordData !== null) {
+  if (data !== null && data.wordData !== null) {
     const pageTitle = `${
-      wordData!.name.charAt(0).toUpperCase() + wordData.name.slice(1)
+      data.wordData!.name.charAt(0).toUpperCase() + data.wordData.name.slice(1)
     } - Word Definition, Synonyms, Antonyms,
   and Examples`;
 
+    //remove _id from wordData
+    const wordDataWithoutID: any = { ...data.wordData };
+    delete wordDataWithoutID._id;
+
     return {
       props: {
-        word: wordData,
+        word: wordDataWithoutID,
         title: pageTitle,
+        paginationLinks: data.paginationLinks,
       },
     };
   } else {

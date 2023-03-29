@@ -135,7 +135,7 @@ code {
   margin-right: 5px;
 }
 #social_share_div {
-  margin-top: 15px;
+  margin-top: 75px;
 }
 .social-btn-link {
   text-decoration: none;
@@ -146,4 +146,13 @@ code {
 #github_link {
   text-decoration: none;
   color: grey
+}
+.pagination-link {
+  background-color: RGB(120, 194, 173) !important;
+}
+.pagination-rightside {
+  float: right;
+}
+.pagination-leftside {
+  float: left;
 }
