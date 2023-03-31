@@ -1,8 +1,10 @@
+import Pagination from "@/components/Pagination";
 import ShareBtns from "@/components/SocialShareBtns";
 import { FetchWordData } from "@/functions";
 import { Word } from "@/types";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import Image from "next/image";
 
 export default function WordDefinitionPage({
   word,
@@ -40,12 +42,16 @@ export default function WordDefinitionPage({
               content={`https://cdn.botbook.dev/${word.name}_0.png`}
             />
           </Head>
-          <div className="container">
-            <h1 id="word_title">
+          <div
+            className="container"
+            itemScope
+            itemType="https://schema.org/DefinedTermSet"
+          >
+            <h1 id="word_title" itemProp="name">
               {word.name.charAt(0).toUpperCase() + word.name.slice(1)}
             </h1>
             <h2 className="word-page-section">Definition</h2>
-            <p>{word.definition}</p>
+            <p itemProp="description">{word.definition}</p>
             <h2 className="word-page-section">Examples</h2>
             <ul>
               {word.examples.map((x, index) => {
@@ -95,56 +101,19 @@ export default function WordDefinitionPage({
               {word.imgs.map((x, index) => {
                 return (
                   <div key={index} className="col">
-                    <img
+                    <Image
                       src={x}
-                      alt={`example of the word ${word.name}`}
+                      alt={`${word.name}`}
                       className="img-fluid generated-img"
+                      width={250}
+                      height={250}
                     />
                   </div>
                 );
               })}
             </div>
 
-            {paginationLinks.length === 1 && word.name < paginationLinks[0] && (
-              <a
-                className="btn pagination-link pagination-rightside"
-                href={`/word/${paginationLinks[0]}`}
-              >
-                {paginationLinks[0].charAt(0).toUpperCase() +
-                  paginationLinks[0].slice(1)}{" "}
-                <img src="/icons/caret-right-fill.svg" />
-              </a>
-            )}
-            {paginationLinks.length === 1 && word.name > paginationLinks[0] && (
-              <a
-                className="btn pagination-link pagination-leftside"
-                href={`/word/${paginationLinks[0]}`}
-              >
-                <img src="/icons/caret-left-fill.svg" />{" "}
-                {paginationLinks[0].charAt(0).toUpperCase() +
-                  paginationLinks[0].slice(1)}{" "}
-              </a>
-            )}
-            {paginationLinks.length > 1 && (
-              <>
-                <a
-                  className="btn pagination-link pagination-leftside"
-                  href={`/word/${paginationLinks[0]}`}
-                >
-                  <img src="/icons/caret-left-fill.svg" />{" "}
-                  {paginationLinks[0].charAt(0).toUpperCase() +
-                    paginationLinks[0].slice(1)}{" "}
-                </a>
-                <a
-                  className="btn pagination-link pagination-rightside"
-                  href={`/word/${paginationLinks[1]}`}
-                >
-                  {paginationLinks[1].charAt(0).toUpperCase() +
-                    paginationLinks[1].slice(1)}{" "}
-                  <img src="/icons/caret-right-fill.svg" />
-                </a>
-              </>
-            )}
+            <Pagination pageLinks={paginationLinks} w={word} />
 
             <ShareBtns word={word.name} />
 

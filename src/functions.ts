@@ -177,7 +177,7 @@ export async function SaveWordToDb(
         d.substring(0, 10).split("-")[0],
       createdOn: Date.now(),
       imgs: generatedImgs,
-      model: "text-davinci-003",
+      model: process.env.MODEL!,
     };
 
     await wordsCollection.insertOne(newWord);
