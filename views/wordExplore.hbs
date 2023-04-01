@@ -1,0 +1,29 @@
+<div class="container">
+  <h1 class="mb-5">There are currently {{{numOfWords}}} words stored in our database</h1>
+    {{#if recentlyAddedWords}}
+        {{#each recentlyAddedWords}}
+            <a
+                href="/word/{{this.name}}"
+                class="link-no-decoration"
+              >
+                <div class="recently-added-words-link-div row">
+                  <div class="col-md-2">
+                    <img
+                      src="https://cdn.botbook.dev/{{this.name}}_{{@index}}.png"
+                      alt="{{this.name}}"
+                      class="img-fluid recently-added-word-img"
+                    />
+                  </div>
+                  <div class="col-md-10">
+                    <span class="recently-added-word-name">
+                      {{capitalize this.name}}
+                    </span>
+                    <p>
+                      {{this.definition}}
+                    </p>
+                  </div>
+                </div>
+              </a>
+        {{/each}}
+    {{/if}}
+</div>

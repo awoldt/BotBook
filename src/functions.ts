@@ -19,12 +19,11 @@ export async function GenerateNewWord(): Promise<string | null> {
   /* 
         This function fetches a random word from
         random word api
-
         will also check to make sure that word is
         not already stored in database
     */
   try {
-    const data = await fetch("https://random-word-api.herokuapp.com/word");
+    const data = await fetch(process.env.RANDOM_WORD_API!);
     if (data.status === 200) {
       const word = await data.json();
 
@@ -71,9 +70,7 @@ export async function GenerateWordDefinition(
       /* 
       sometimes definitions generated have word with colon
       before the actual definition 
-
       ex - Distorted: pulled or twisted out of shape
-
       remove colon if it is present
       */
 
@@ -264,7 +261,6 @@ export async function FetchWordData(w: string): Promise<WordPageData | null> {
     This function will see if word user 
     is accessing through route (/word/[whatever_word])
     exists in database
-
     it also generates a basic pagination for the two words in the database 
     its next to alphabetically
     ex: ["bat", "cat", "rat"] - when visiting the page for the word cat, 
@@ -418,7 +414,6 @@ export async function GenerateImage(word: string): Promise<string[] | null> {
   /* 
     This function will generate an image
     based on the word 
-
     This image will then be uploaded to 
     google cloud storage bucket and 
     connected to a load balancer that
