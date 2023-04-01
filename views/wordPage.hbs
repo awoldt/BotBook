@@ -1,0 +1,71 @@
+<div class="container" itemScope itemType="https://schema.org/DefinedTermSet">
+  <h1 id="word_title" itemProp="name">
+    {{capitalize word.wordData.name}}
+  </h1>
+
+  {{! DEFINITION}}
+  <h2 class="word-page-section">Definition</h2>
+  <p itemProp="description">{{word.wordData.definition}}</p>
+
+  {{! EXAMPLES}}
+  <h2 class="word-page-section">Examples</h2>
+  <ul>
+    {{#each word.wordData.examples}}
+      <li><p>{{this}}</p></li>
+    {{/each}}
+  </ul>
+
+  {{! SYNONYMS}}
+  {{#if word.wordData.synonyms}}
+    <h2 class="word-page-section">Synonyms</h2>
+    {{#each word.wordData.synonyms}}
+      <div class="syn-anto-div">
+        <span>{{this}}</span>
+      </div>
+    {{/each}}
+  {{/if}}
+
+  {{! ANTONYMS}}
+  {{#if word.wordData.antonyms}}
+    <h2 class="word-page-section">Antonyms</h2>
+    {{#each word.wordData.antonyms}}
+      <div class="syn-anto-div">
+        <span>{{this}}</span>
+      </div>
+    {{/each}}
+  {{/if}}
+
+  {{! HISTORY}}
+  {{#if word.wordData.history}}
+    <h2 class="word-page-section">History</h2>
+    {{#each word.wordData.history}}
+      <p>{{this}}</p>
+    {{/each}}
+  {{/if}}
+
+  <div id="generated_imgs_div" class="row">
+
+    {{#each word.wordData.imgs}}
+      <div class="col">
+        <img src="{{this}}" class="img-fluid generated-img" />
+      </div>
+    {{/each}}
+
+  </div>
+
+  <footer id="footer">
+    <div>
+      <img src="/icons/clock-history.svg" />
+      <p class="footer_text">
+        Last updated on
+        {{word.wordData.lastUpdated}}
+      </p>
+    </div>
+    <div>
+      <p class="footer_text" id="ai_generation_claim">
+        This page was generated using AI and because of this some information
+        may be inaccurate
+      </p>
+    </div>
+  </footer>
+</div>

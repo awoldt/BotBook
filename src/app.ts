@@ -1,33 +1,85 @@
-/* 
-  This api route will generate a new random
-  word along with a definition, example sentences, 
-  synonyms, antonyms, history, and image of the word and 
-  save all data in mongodb
-*/
-
+import path from "path";
+import * as dotenv from "dotenv";
+dotenv.config({ path: path.join(__dirname, "..", ".env") });
+import express from "express";
+import compression from "compression";
+import { engine, create } from "express-handlebars";
 import {
-  DbConnect,
+  FetchWordData,
   GenerateExampleSentences,
-  GenerateNewWord,
-  GenerateWordHistory,
-  GenerateWordDefinition,
-  SaveWordToDb,
-  GenerateSynonymsAndAntonyms,
-  wordsCollection,
   GenerateImage,
-} from "@/functions";
-import type { NextApiRequest, NextApiResponse } from "next";
+  GenerateNewWord,
+  GenerateSynonymsAndAntonyms,
+  GenerateWordDefinition,
+  GenerateWordHistory,
+  GetRecentlyAddedWords,
+  SaveWordToDb,
+  wordsCollection,
+} from "./functions";
+import { Word, WordPageData } from "./types";
 
-type Data = {
-  msg: string;
-};
+const customHelpers = create({
+  helpers: {
+    //capitalized the first letter of any string
+    capitalize(word: string) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    },
+  },
+});
 
-DbConnect();
+const app = express();
+app.engine(
+  "hbs",
+  engine({
+    extname: "hbs",
+    layoutsDir: path.join(__dirname, "..", "views", "layouts"),
+    defaultLayout: "main",
+    partialsDir: path.join(__dirname, "..", "views", "partials"),
+    helpers: customHelpers.helpers,
+  })
+);
+app.set("view engine", "hbs");
+app.set("views", path.join(__dirname, "..", "views"));
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
+app.use(express.static(path.join(__dirname, "..", "public")));
+app.use(compression());
+
+app.get("/", (req, res) => {
+  res.status(200).sendFile(path.join(__dirname, "..", "index.html"));
+});
+
+app.get("/word", async (req, res) => {
+  const n: number = (await wordsCollection.find().toArray()).length;
+  const r: Word[] | null = await GetRecentlyAddedWords();
+  res.render("wordExplore", {
+    title: "word page",
+    numOfWords: n,
+    recentlyAddedWords: r,
+  });
+});
+
+app.get("/word/:_WORD", async (req, res) => {
+  const w: WordPageData | null = await FetchWordData(req.params._WORD);
+  if (w !== null) {
+    res.status(200).render("wordPage", {
+      title: `${
+        w.wordData.name.charAt(0).toUpperCase() + w.wordData.name.slice(1)
+      } - Word Definition, Synonyms, Antonyms,
+      and Examples`,
+      word: w,
+      wordpageHeaderTags: true,
+    });
+  } else {
+    res
+      .status(404)
+      .send(`Could not find definition for the word ${req.params._WORD}`);
+  }
+});
+
+app.get("/api/generate-definition", async (req, res) => {
+  console.log(req.headers.generation_key);
+  console.log(process.env.GENERATION_KEY);
+
   //request needs to have generation key in header
   if (
     req.headers.generation_key !== undefined &&
@@ -44,12 +96,10 @@ export default async function handler(
       /* 
         Keep attempting to generate words until
         there are no errors thrown (word has a definition)
-
         There is a set number of attempts for this to
         work as there will be a timeout if not
         able to find word to use amongst thousands of 
         words to filter through
-
         loop until word is found that has not been defined
     */
       let attempts: number = 0;
@@ -133,4 +183,8 @@ export default async function handler(
   } else {
     res.status(401).json({ msg: "Unauthorized access" });
   }
-}
+});
+
+app.listen(process.env.PORT || 8080, () => {
+  console.log(`\nServer listening on port ${process.env.PORT || 8080}`);
+});
