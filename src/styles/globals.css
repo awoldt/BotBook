@@ -115,10 +115,11 @@ code {
 }
 .recently-added-words-link-div {
   width: fit-content;
+  margin-bottom: 30px;
 }
 .recently-added-word-name {
   font-weight: 500;
-  font-size: 18px;
+  font-size: 25px;
 }
 #recently-added-words-section {
   margin-top: 25px;
@@ -156,4 +157,14 @@ code {
 }
 .pagination-leftside {
   float: left;
+}
+.nav-link {
+  color: white !important;
+}
+.read-more-tag {
+  color: #007bff;
+  font-size: 13px;
+}
+.recently-added-word-img {
+  border-radius: 8px;
 }

@@ -10,7 +10,7 @@ export default function Highlights() {
       <div className="col-md-4 text-center highlight-col">
         <img src="/icons/refresh.svg" />
         <p>
-          New words are automatically added every hour to our database
+          New words are added every day to our database
         </p>
       </div>
       <div className="col-md-4 text-center highlight-col">
