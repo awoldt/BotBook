@@ -485,10 +485,7 @@ export async function GenerateImage(word: string): Promise<string[] | null> {
 export async function GenerateSitemap(): Promise<string | null> {
   try {
     //get all words in database
-    const words = await await wordsCollection
-      .find()
-      .sort({ name: 1 })
-      .toArray();
+    const words = await wordsCollection.find().sort({ name: 1 }).toArray();
 
     //make custom xml string
     let xmlStr: string = "";

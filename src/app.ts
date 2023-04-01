@@ -9,6 +9,7 @@ import {
   GenerateExampleSentences,
   GenerateImage,
   GenerateNewWord,
+  GenerateSitemap,
   GenerateSynonymsAndAntonyms,
   GenerateWordDefinition,
   GenerateWordHistory,
@@ -182,6 +183,19 @@ app.get("/api/generate-definition", async (req, res) => {
     }
   } else {
     res.status(401).json({ msg: "Unauthorized access" });
+  }
+});
+
+app.get("/sitemap.xml", async (req, res) => {
+  const x: string | null = await GenerateSitemap();
+  if (x !== null) {
+    res.set("Content-Type", "text/xml");
+    res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    ${x}
+    </urlset>`);
+  } else {
+    res.status(500).send("Error while generating sitemap");
   }
 });
 
