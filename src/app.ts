@@ -18,15 +18,7 @@ import {
   wordsCollection,
 } from "./functions";
 import { Word, WordPageData } from "./types";
-
-const customHelpers = create({
-  helpers: {
-    //capitalized the first letter of any string
-    capitalize(word: string) {
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    },
-  },
-});
+import CustomHelpers from "./helpers";
 
 const app = express();
 app.engine(
@@ -36,7 +28,7 @@ app.engine(
     layoutsDir: path.join(__dirname, "..", "views", "layouts"),
     defaultLayout: "main",
     partialsDir: path.join(__dirname, "..", "views", "partials"),
-    helpers: customHelpers.helpers,
+    helpers: CustomHelpers.helpers,
   })
 );
 app.set("view engine", "hbs");
@@ -69,6 +61,19 @@ app.get("/word/:_WORD", async (req, res) => {
       and Examples`,
       word: w,
       wordpageHeaderTags: true,
+      paginationFormat: (): boolean => {
+        /* 
+        if true, the current word being displayed
+        is inbetween two other words in entire dictionary
+        sorted alphabetically 
+        (paginationLinks returned in word obj
+        will have a length of 2)
+        */
+        if (w.paginationLinks.length === 2) {
+          return true;
+        }
+        return false;
+      },
     });
   } else {
     res
@@ -78,9 +83,6 @@ app.get("/word/:_WORD", async (req, res) => {
 });
 
 app.get("/api/generate-definition", async (req, res) => {
-  console.log(req.headers.generation_key);
-  console.log(process.env.GENERATION_KEY);
-
   //request needs to have generation key in header
   if (
     req.headers.generation_key !== undefined &&

@@ -1,0 +1,33 @@
+<div>
+  {{#if paginationFormat}}
+    
+    <a
+      class="btn pagination-link pagination-leftside"
+      href="/word/{{word.paginationLinks.[0]}}"
+    >
+      <img src="/icons/caret-left-fill.svg" />
+      {{capitalize word.paginationLinks.[0]}}
+    </a>
+    <a
+      class="btn pagination-link pagination-rightside"
+      href="/word/{{word.paginationLinks.[1]}}"
+    >
+      {{capitalize word.paginationLinks.[1]}}
+      <img src="/icons/caret-right-fill.svg" />
+    </a>
+
+    {{else}}
+    <div class="text-center">
+        <p>View other words in our dictionary:</p>
+        <a
+      class="btn pagination-link"
+      href="/word/{{word.paginationLinks.[0]}}"
+    >
+      {{capitalize word.paginationLinks.[0]}}
+    </a>
+    </div>
+    
+
+  {{/if}}
+  
+</div>
