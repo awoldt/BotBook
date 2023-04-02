@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: path.join(__dirname, "..", ".env") });
 import express from "express";
 import compression from "compression";
-import { engine, create } from "express-handlebars";
+import { engine } from "express-handlebars";
 import {
   FetchWordData,
   GenerateExampleSentences,
@@ -52,28 +52,15 @@ app.get("/word", async (req, res) => {
 });
 
 app.get("/word/:_WORD", async (req, res) => {
-  const w: WordPageData | null = await FetchWordData(req.params._WORD);
+  const w: Word | null = await FetchWordData(req.params._WORD);
   if (w !== null) {
     res.status(200).render("wordPage", {
       title: `${
-        w.wordData.name.charAt(0).toUpperCase() + w.wordData.name.slice(1)
+        w.name.charAt(0).toUpperCase() + w.name.slice(1)
       } - Word Definition, Synonyms, Antonyms,
       and Examples`,
       word: w,
       wordpageHeaderTags: true,
-      paginationFormat: (): boolean => {
-        /* 
-        if true, the current word being displayed
-        is inbetween two other words in entire dictionary
-        sorted alphabetically 
-        (paginationLinks returned in word obj
-        will have a length of 2)
-        */
-        if (w.paginationLinks.length === 2) {
-          return true;
-        }
-        return false;
-      },
     });
   } else {
     res
@@ -83,7 +70,6 @@ app.get("/word/:_WORD", async (req, res) => {
 });
 
 app.get("/api/generate-definition", async (req, res) => {
-  //request needs to have generation key in header
   if (
     req.headers.generation_key !== undefined &&
     req.headers.generation_key === process.env.GENERATION_KEY

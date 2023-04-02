@@ -1,24 +1,24 @@
 <div class="container" itemScope itemType="https://schema.org/DefinedTermSet">
   <h1 id="word_title" itemProp="name">
-    {{capitalize word.wordData.name}}
+    {{capitalize word.name}}
   </h1>
 
   {{! DEFINITION}}
   <h2 class="word-page-section">Definition</h2>
-  <p itemProp="description">{{word.wordData.definition}}</p>
+  <p itemProp="description">{{word.definition}}</p>
 
   {{! EXAMPLES}}
   <h2 class="word-page-section">Examples</h2>
   <ul>
-    {{#each word.wordData.examples}}
+    {{#each word.examples}}
       <li><p>{{this}}</p></li>
     {{/each}}
   </ul>
 
   {{! SYNONYMS}}
-  {{#if word.wordData.synonyms}}
+  {{#if word.synonyms}}
     <h2 class="word-page-section">Synonyms</h2>
-    {{#each word.wordData.synonyms}}
+    {{#each word.synonyms}}
       <div class="syn-anto-div">
         <span>{{this}}</span>
       </div>
@@ -26,9 +26,9 @@
   {{/if}}
 
   {{! ANTONYMS}}
-  {{#if word.wordData.antonyms}}
+  {{#if word.antonyms}}
     <h2 class="word-page-section">Antonyms</h2>
-    {{#each word.wordData.antonyms}}
+    {{#each word.antonyms}}
       <div class="syn-anto-div">
         <span>{{this}}</span>
       </div>
@@ -36,33 +36,28 @@
   {{/if}}
 
   {{! HISTORY}}
-  {{#if word.wordData.history}}
+  {{#if word.history}}
     <h2 class="word-page-section">History</h2>
-    {{#each word.wordData.history}}
+    {{#each word.history}}
       <p>{{this}}</p>
     {{/each}}
   {{/if}}
 
   <div id="generated_imgs_div" class="row">
 
-    {{#each word.wordData.imgs}}
+    {{#each word.imgs}}
       <div class="col">
         <img src="{{this}}" class="img-fluid generated-img" />
       </div>
     {{/each}}
 
   </div>
-
-  {{> pagination}}
-
-
-
   <footer id="footer">
     <div>
       <img src="/icons/clock-history.svg" />
       <p class="footer_text">
         Last updated on
-        {{word.wordData.lastUpdated}}
+        {{word.lastUpdated}}
       </p>
     </div>
     <div>

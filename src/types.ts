@@ -19,5 +19,4 @@ export interface Word {
  //all data needed to render /word/{WORD} route
   export interface WordPageData {
     wordData: Word;
-    paginationLinks: string[];
   }

@@ -256,7 +256,7 @@ export async function GenerateSynonymsAndAntonyms(
   }
 }
 
-export async function FetchWordData(w: string): Promise<WordPageData | null> {
+export async function FetchWordData(w: string): Promise<Word | null> {
   /* 
     This function will see if word user 
     is accessing through route (/word/[whatever_word])
@@ -266,6 +266,7 @@ export async function FetchWordData(w: string): Promise<WordPageData | null> {
     ex: ["bat", "cat", "rat"] - when visiting the page for the word cat, 
     the words bat and rat would appear at the bottom as pagination links
   */
+
   try {
     const x = await wordsCollection.find({ name: w }).toArray();
 
@@ -275,41 +276,7 @@ export async function FetchWordData(w: string): Promise<WordPageData | null> {
       const word: any = { ...x[0] };
       delete word._id;
 
-      const y = await wordsCollection.find().sort({ name: 1 }).toArray();
-      /* 
-        if word is first or last in array
-        return only 1 pagination link
-      */
-
-      //FIRST
-      if (y[0].name === w) {
-        const q: WordPageData = {
-          wordData: x[0],
-          paginationLinks: [y[1].name],
-        };
-        return q;
-      }
-      //LAST
-      else if (y[y.length - 1].name === w) {
-        const q: WordPageData = {
-          wordData: x[0],
-          paginationLinks: [y[y.length - 2].name],
-        };
-        return q;
-      } else {
-        let q!: WordPageData;
-        //loop throuh array of all words until its the current word
-        for (let index = 0; index < y.length; index++) {
-          if (y[index].name === w) {
-            q = {
-              wordData: x[0],
-              paginationLinks: [y[index - 1].name, y[index + 1].name],
-            };
-            break;
-          }
-        }
-        return q;
-      }
+      return word;
     }
     //word does not exist
     else {
