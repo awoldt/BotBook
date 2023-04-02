@@ -465,7 +465,7 @@ export async function GenerateImage(word: string): Promise<string[] | null> {
         }
 
         return imageData.data.map((x: any, index: number) => {
-          return `https://cdn.botbook.dev/${word}_${index}.png`;
+          return `https://cdn.botbook.dev/${word}_${index}.webp`;
         });
       } catch (e) {
         console.log(e);
