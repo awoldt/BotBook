@@ -1,4 +1,4 @@
-import { SearchResults, Word, WordPageData } from "./types";
+import { BrowseList, SearchResults, Word, WordPageData } from "./types";
 import { MongoClient } from "mongodb";
 import { search } from "fast-fuzzy";
 const DbClient = new MongoClient(process.env.MONGODB_CONNECTION_KEY!);
@@ -466,4 +466,46 @@ export async function GenerateSitemap(): Promise<string | null> {
     console.log("error while generating sitemap");
     return null;
   }
+}
+
+export async function GenerateBrowseList(): Promise<BrowseList[] | null> {
+  /* 
+    This function will return a list of words 
+    stored in the database sorted alphabetically
+    to be shown on /word route
+  */
+  try {
+    //get all the unique first letters in the array
+    const wordsStartingWithCharacter = await wordsCollection
+      .aggregate([
+        {
+          $group: {
+            _id: { letter: { $substr: ["$name", 0, 1] } },
+            words: { $push: "$name" },
+          },
+        },
+        {
+          $sort: {
+            "_id.letter": 1,
+          },
+        },
+      ])
+      .toArray();
+
+    const list: BrowseList[] = [];
+    wordsStartingWithCharacter.forEach((z: any) => {
+      list.push({
+        letter: z._id.letter,
+        words:
+          z.words.length > 100 ? z.words.slice(0, 100).sort() : z.words.sort(), //makes sure max of 100 words are returned
+        numOfWords: z.words.length,
+      });
+    });
+
+    return list;
+  } catch (e) {
+    console.log(e);
+    console.log("error while trying to generate browse list");
+  }
+  return null;
 }

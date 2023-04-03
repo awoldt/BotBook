@@ -6,6 +6,7 @@ import compression from "compression";
 import { engine } from "express-handlebars";
 import {
   FetchWordData,
+  GenerateBrowseList,
   GenerateExampleSentences,
   GenerateImage,
   GenerateNewWord,
@@ -17,7 +18,7 @@ import {
   SaveWordToDb,
   wordsCollection,
 } from "./functions";
-import { Word, WordPageData } from "./types";
+import { BrowseList, Word, WordPageData } from "./types";
 import CustomHelpers from "./helpers";
 
 const app = express();
@@ -44,10 +45,12 @@ app.get("/", (req, res) => {
 app.get("/word", async (req, res) => {
   const n: number = (await wordsCollection.find().toArray()).length;
   const r: Word[] | null = await GetRecentlyAddedWords();
+  const l: BrowseList[] | null = await GenerateBrowseList();
   res.render("wordExplore", {
-    title: "word page",
+    title: "Explore Words",
     numOfWords: n,
     recentlyAddedWords: r,
+    browseList: l,
   });
 });
 
