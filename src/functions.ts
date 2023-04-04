@@ -363,11 +363,19 @@ export async function Search(
 
 export async function GetRecentlyAddedWords(): Promise<Word[] | null> {
   try {
-    const words = await wordsCollection
-      .find({}, { projection: { _id: 0 } })
-      .limit(5)
-      .sort({ _id: -1 })
-      .toArray();
+    const words = (
+      await wordsCollection
+        .find({}, { projection: { _id: 0 } })
+        .limit(6)
+        .sort({ _id: -1 })
+        .toArray()
+    ).map((x: Word) => {
+      if (x.definition.length > 200) {
+        x.definition = x.definition.slice(0, 200) + "...";
+        return x;
+      }
+      return x;
+    });
 
     return words;
   } catch (e) {

@@ -170,11 +170,13 @@ code {
 .browse-list-letter {
   display: block;
   font-weight: Bold;
-  font-size: 20px;
+  font-size: 23px;
 }
 .browse-list-links {
   display: block;
   width: fit-content;
+  text-decoration: none;
+  font-weight: 600;
 }
 .browse-list-letter-divs {
   margin-bottom: 25px;
