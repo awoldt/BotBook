@@ -20,6 +20,12 @@ code {
 .container {
   padding-top: 50px;
 }
+h2 {
+  font-size: 22px !important;
+}
+h3 {
+  font-size: 20px !important;
+}
 /* end of overriding */
 
 @media (max-width: 768px) {
@@ -128,6 +134,7 @@ code {
 }
 #homepage_about {
   margin-top: 50px;
+  max-width: 1000px;
 }
 .social-media-share-btn {
   cursor: pointer;
@@ -183,5 +190,15 @@ code {
 }
 .browse-list-num-of-words {
   font-size: 16px;
-  color: grey !important
+  color: grey !important;
+}
+.other-word-link {
+  background-color: rgb(120, 194, 173, .3);
+  padding: 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: black;
+  margin-bottom: 10px;
+  width: fit-content;
+  display: inline-block;
 }

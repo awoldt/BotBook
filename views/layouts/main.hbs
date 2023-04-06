@@ -19,7 +19,7 @@
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
     {{! These tags only render when visiting a /word/:_WORD route}}
-    {{#if wordpageHeaderTags}}
+    {{#if wordPageHeadTag}}
       <link
         rel="canonical"
         href="https://botbook.dev/word/{{word.name}}"
@@ -39,6 +39,13 @@
       <meta
         property="og:image"
         content="https://cdn.botbook.dev/{{word.name}}_0.png"
+      />
+    {{/if}}
+    {{! These tags only render when visiting /word route}}
+    {{#if wordExploreHeadTag}}
+      <link
+        rel="canonical"
+        href="https://botbook.dev/word"
       />
     {{/if}}
   </head>

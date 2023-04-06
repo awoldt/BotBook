@@ -1,7 +1,7 @@
 import express from "express";
 import {
   GenerateExampleSentences,
-  GenerateImage,
+  GenerateImages,
   GenerateNewWord,
   GenerateSynonymsAndAntonyms,
   GenerateWordDefinition,
@@ -50,7 +50,7 @@ router.get("/api/generate-definition", async (req, res) => {
               const synAndAnto = await GenerateSynonymsAndAntonyms(word);
               if (synAndAnto !== null) {
                 //6. generate images
-                const images: string[] | null = await GenerateImage(word);
+                const images: string[] | null = await GenerateImages(word);
                 if (images !== null) {
                   //7. save data to database
                   const savedWord = await SaveWordToDb(

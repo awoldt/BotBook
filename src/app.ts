@@ -5,13 +5,14 @@ import express from "express";
 import compression from "compression";
 import { engine } from "express-handlebars";
 import {
+  FetchOtherWords,
   FetchWordData,
   GenerateBrowseList,
   GenerateSitemap,
   GetRecentlyAddedWords,
   wordsCollection,
 } from "./functions";
-import { BrowseList, Word, WordPageData } from "./types";
+import { BrowseList, Word } from "./types";
 import CustomHelpers from "./helpers";
 import apiRoutes from "./routes/api";
 
@@ -46,19 +47,26 @@ app.get("/word", async (req, res) => {
     numOfWords: n,
     recentlyAddedWords: r,
     browseList: l,
+    wordExploreHeadTag: true,
   });
 });
 
 app.get("/word/:_WORD", async (req, res) => {
   const w: Word | null = await FetchWordData(req.params._WORD);
   if (w !== null) {
+    const ow: string[] | null = await FetchOtherWords(
+      req.params._WORD.slice(0, 1),
+      req.params._WORD
+    );
+
     res.status(200).render("wordPage", {
       title: `${
         w.name.charAt(0).toUpperCase() + w.name.slice(1)
       } - Word Definition, Synonyms, Antonyms,
       and Examples`,
       word: w,
-      wordpageHeaderTags: true,
+      wordPageHeadTag: true,
+      otherWords: ow,
     });
   } else {
     res

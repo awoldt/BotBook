@@ -385,7 +385,7 @@ export async function GetRecentlyAddedWords(): Promise<Word[] | null> {
   }
 }
 
-export async function GenerateImage(word: string): Promise<string[] | null> {
+export async function GenerateImages(word: string): Promise<string[] | null> {
   /* 
     This function will generate an image
     based on the word 
@@ -516,4 +516,40 @@ export async function GenerateBrowseList(): Promise<BrowseList[] | null> {
     console.log("error while trying to generate browse list");
   }
   return null;
+}
+
+export async function FetchOtherWords(
+  firstChar: String,
+  word: String
+): Promise<string[] | null> {
+  /* 
+    This function will return a list of words 
+    that start with the same letter as the current
+    wordpage being viewed
+
+    The words returned will be the 5 words to the right and 
+    5 words to the left of the current word being viewed in the
+    array
+  */
+  try {
+    const words: any = (
+      await wordsCollection
+        .find({ name: { $regex: `^${firstChar}` } })
+        .toArray()
+    ).map((x: Word) => {
+      return x.name;
+    });
+    const index = words.indexOf(word);
+    //grab the 5 words to the left and right of this index
+    //now find index where current word being viewed is
+    return words
+      .slice(index - 5, index)
+      .concat(words.slice(index + 1, index + 6));
+  } catch (e) {
+    console.log(e);
+    console.log(
+      `error while fetching other words that start with the letter ${firstChar}`
+    );
+    return null;
+  }
 }
