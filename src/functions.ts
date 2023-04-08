@@ -1,4 +1,4 @@
-import { BrowseList, SearchResults, Word, WordPageData } from "./types";
+import { BrowseList, SearchResults, Word } from "./types";
 import { MongoClient } from "mongodb";
 import { search } from "fast-fuzzy";
 const DbClient = new MongoClient(process.env.MONGODB_CONNECTION_KEY!);
@@ -505,7 +505,7 @@ export async function GenerateBrowseList(): Promise<BrowseList[] | null> {
       list.push({
         letter: z._id.letter,
         words:
-          z.words.length > 100 ? z.words.slice(0, 100).sort() : z.words.sort(), //makes sure max of 100 words are returned
+          z.words.length > 50 ? z.words.slice(0, 50).sort() : z.words.sort(), //makes sure max of 50 words are returned
         numOfWords: z.words.length,
       });
     });

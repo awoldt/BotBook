@@ -16,13 +16,8 @@ export interface SearchResults {
   name: string;
 }
 
-//all data needed to render /word/{WORD} route
-export interface WordPageData {
-  wordData: Word;
-}
-
 export interface BrowseList {
   letter: string;
   words: string[];
-  numOfWords: number
+  numOfWords: number;
 }

@@ -120,6 +120,11 @@ h3 {
 .recently-added-words-link-div {
   width: fit-content;
   margin-bottom: 30px;
+  padding: 10px;
+  border-radius: 8px;
+}
+.recently-added-words-link-div:hover {
+  background-color: rgb(120, 194, 173, 0.4);
 }
 .recently-added-word-name {
   font-weight: 500;
@@ -193,7 +198,7 @@ h3 {
   color: grey !important;
 }
 .other-word-link {
-  background-color: rgb(120, 194, 173, .3);
+  background-color: rgb(120, 194, 173, 0.3);
   padding: 15px;
   border-radius: 10px;
   text-decoration: none;
