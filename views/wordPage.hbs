@@ -66,10 +66,13 @@
   {{! REFERENCE LINKS}}
   <div id="reference_links_div">
     {{#if word.referenceLinks}}
-    <p id="reference_links_ptag">Helpful links</p>
+    <span id="reference_links_ptag">Helpful links</span>
+    <ol>
       {{#each word.referenceLinks}}
-       <a href="{{this}}" target="_blank" class="reference-links">{{this}}</a>
+       <li><a href="{{this}}" target="_blank" class="reference-link">{{this}}</a></li>
       {{/each}}
+    </ol>
+      
     {{/if}}
   </div>
   

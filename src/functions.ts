@@ -614,7 +614,7 @@ export async function GetReferenceLinks(
         return x !== null;
       });
 
-      return successLinks;
+      return successLinks.length > 4 ? successLinks.slice(0, 4) : successLinks;
     } else {
       console.log(`could not get links to help define word ${word}`);
       return null;
