@@ -1,4 +1,4 @@
-//all the data stored on the word generated
+//ALL DATA STORED FOR EACH WORD
 export interface Word {
   name: string;
   definition: string;
@@ -10,6 +10,7 @@ export interface Word {
   createdOn: number;
   imgs: string[]; //urls of all the images
   model: string;
+  referenceLinks?: string[]; //optional, added this property late, some documents will not have this stored in db
 }
 
 export interface SearchResults {

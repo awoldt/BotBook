@@ -149,7 +149,8 @@ export async function SaveWordToDb(
   exampleSentences: string[],
   historyAndUse: string[] | null,
   synAndAnto: string[][],
-  generatedImgs: string[]
+  generatedImgs: string[],
+  referenceLinks: string[]
 ): Promise<Word | null> {
   /* 
     This function will save word 
@@ -175,6 +176,7 @@ export async function SaveWordToDb(
       createdOn: Date.now(),
       imgs: generatedImgs,
       model: process.env.MODEL!,
+      referenceLinks,
     };
 
     await wordsCollection.insertOne(newWord);
@@ -505,7 +507,7 @@ export async function GenerateBrowseList(): Promise<BrowseList[] | null> {
       list.push({
         letter: z._id.letter,
         words:
-          z.words.length > 50 ? z.words.slice(0, 50).sort() : z.words.sort(), //makes sure max of 50 words are returned
+          z.words.length > 25 ? z.words.slice(0, 25).sort() : z.words.sort(), //makes sure max of 25 words are returned
         numOfWords: z.words.length,
       });
     });
@@ -549,6 +551,78 @@ export async function FetchOtherWords(
     console.log(e);
     console.log(
       `error while fetching other words that start with the letter ${firstChar}`
+    );
+    return null;
+  }
+}
+
+export async function GetReferenceLinks(
+  word: string
+): Promise<string[] | null> {
+  /* 
+    This function will return a list of 
+    https links to websites that define the current 
+    words, gives user more context
+  */
+
+  try {
+    const data = await fetch("https://api.openai.com/v1/completions", {
+      method: "post",
+      headers: {
+        Authorization: "Bearer " + process.env.OPEN_AI_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: process.env.MODEL,
+        prompt: `Generate a comma seperated list of https links to websites that define the word ${word}`,
+        max_tokens: 4000,
+      }),
+    });
+    if (data.status === 200) {
+      console.log(`generating reference links for the word ${word}`);
+      const regex = /(https?:\/\/[^ ]*)/;
+      const linksResponse = await data.json();
+      const httpsLinks = linksResponse.choices[0].text
+        .split("\n")
+        .filter((x: string) => {
+          return x !== "";
+        })
+        .map((x: string) => {
+          return x.match(regex)![1];
+        })
+        .filter((x: string) => {
+          return !x.includes("oxforddictionaries");
+        });
+      //make sure that links returned are all 200 status code
+      const successLinks = (
+        await Promise.all(
+          httpsLinks.map(async (x: string) => {
+            try {
+              const req = await fetch(x);
+              if (req.status === 200) {
+                return x;
+              } else {
+                console.log(`link ${x} is not a valid link`);
+                return null;
+              }
+            } catch (e) {
+              return null;
+            }
+          })
+        )
+      ).filter((x: string | null) => {
+        return x !== null;
+      });
+
+      return successLinks;
+    } else {
+      console.log(`could not get links to help define word ${word}`);
+      return null;
+    }
+  } catch (e) {
+    console.log(e);
+    console.log(
+      `There was an error while finding links that help define the word ${word}`
     );
     return null;
   }

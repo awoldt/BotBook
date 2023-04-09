@@ -207,3 +207,12 @@ h3 {
   width: fit-content;
   display: inline-block;
 }
+.reference-links {
+  display: block;
+}
+#reference_links_ptag {
+  margin-bottom: 0px;
+}
+#reference_links_div {
+  margin-top: 10px;
+}
