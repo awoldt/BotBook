@@ -591,7 +591,7 @@ export async function GetReferenceLinks(
           return x.match(regex)![1];
         })
         .filter((x: string) => {
-          return !x.includes("oxforddictionaries");
+          return !x.includes("oxforddictionaries") && !x.includes("lexico");
         });
       //make sure that links returned are all 200 status code
       const successLinks = (
