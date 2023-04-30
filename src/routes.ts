@@ -1,16 +1,83 @@
+import path from "path";
 import express from "express";
 import {
+  FetchOtherWords,
+  FetchWordData,
+  GenerateBrowseList,
   GenerateExampleSentences,
   GenerateImages,
   GenerateNewWord,
+  GenerateSitemap,
   GenerateSynonymsAndAntonyms,
   GenerateWordDefinition,
   GenerateWordHistory,
+  GetRecentlyAddedWords,
   GetReferenceLinks,
   SaveWordToDb,
   wordsCollection,
-} from "../functions";
+} from "./functions";
+import { BrowseList, Word } from "./types";
 const router = express.Router();
+
+router.get("/", (req, res) => {
+  res.status(200).sendFile(path.join(__dirname, "..", "index.html"));
+});
+
+router.get("/word", async (req, res) => {
+  const n: number = (await wordsCollection.find().toArray()).length;
+  const r: Word[] | null = await GetRecentlyAddedWords();
+  const l: BrowseList[] | null = await GenerateBrowseList();
+  res.render("wordExplore", {
+    title: "Explore Words",
+    numOfWords: n,
+    recentlyAddedWords: r,
+    browseList: l,
+    wordExploreHeadTag: true,
+  });
+});
+
+router.get("/word/:_WORD", async (req, res) => {
+  const w: Word | null = await FetchWordData(req.params._WORD);
+  if (w !== null) {
+    const ow: string[] | null = await FetchOtherWords(
+      req.params._WORD.slice(0, 1),
+      req.params._WORD
+    );
+
+    res.status(200).render("wordPage", {
+      title: `${
+        w.name.charAt(0).toUpperCase() + w.name.slice(1)
+      } - Definition, Synonyms, Antonyms,
+      and Examples`,
+      word: w,
+      wordPageHeadTag: true,
+      otherWords: ow,
+    });
+  } else {
+    res
+      .status(404)
+      .send(`Could not find definition for the word ${req.params._WORD}`);
+  }
+});
+
+router.get("/sitemap.xml", async (req, res) => {
+  const x: string | null = await GenerateSitemap();
+  if (x !== null) {
+    res.set("Content-Type", "text/xml");
+    res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+      <loc>https://botbook.dev</loc>
+    </url>
+    <url>
+      <loc>https://botbook.dev/word</loc>
+    </url>
+    ${x}
+    </urlset>`);
+  } else {
+    res.status(500).send("Error while generating sitemap");
+  }
+});
 
 router.get("/api/generate-definition", async (req, res) => {
   if (

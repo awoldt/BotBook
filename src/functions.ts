@@ -1,6 +1,5 @@
-import { BrowseList, SearchResults, Word } from "./types";
+import { BrowseList, Word } from "./types";
 import { MongoClient } from "mongodb";
-import { search } from "fast-fuzzy";
 const DbClient = new MongoClient(process.env.MONGODB_CONNECTION_KEY!);
 export const wordsCollection = DbClient.db(process.env.DB).collection<Word>(
   "words"
@@ -332,37 +331,6 @@ export async function GenerateWordHistory(w: string): Promise<string[] | null> {
   }
 }
 
-export async function Search(
-  q: string
-): Promise<SearchResults[] | undefined | null> {
-  /* 
-    This function will search for words
-    in database based on user's query
-  */
-  try {
-    //get entire collections of words to filter through
-    const words = await wordsCollection.find().toArray();
-    const results = search(q, words, { keySelector: (obj) => obj.name });
-
-    //only want to return word name and part of speech
-    const returnedResults = results.map((x) => {
-      return {
-        name: x.name,
-      };
-    });
-
-    if (returnedResults.length === 0) {
-      return undefined;
-    } else {
-      return returnedResults;
-    }
-  } catch (e) {
-    console.log(e);
-    console.log("error while searching for words with query " + q);
-    return null;
-  }
-}
-
 export async function GetRecentlyAddedWords(): Promise<Word[] | null> {
   try {
     const words = (
@@ -482,11 +450,11 @@ export async function GenerateBrowseList(): Promise<BrowseList[] | null> {
   /* 
     This function will return a list of words 
     stored in the database sorted alphabetically
-    to be shown on /word route
+    to be shown for each letter
   */
   try {
     //get all the unique first letters in the array
-    const wordsStartingWithCharacter = await wordsCollection
+    const wordsStartingWithCharacter: any = await wordsCollection
       .aggregate([
         {
           $group: {
@@ -499,20 +467,20 @@ export async function GenerateBrowseList(): Promise<BrowseList[] | null> {
             "_id.letter": 1,
           },
         },
+        {
+          $set: {
+            words: {
+              $sortArray: {
+                input: "$words",
+                sortBy: 1,
+              },
+            },
+          },
+        },
       ])
       .toArray();
 
-    const list: BrowseList[] = [];
-    wordsStartingWithCharacter.forEach((z: any) => {
-      list.push({
-        letter: z._id.letter,
-        words:
-          z.words.length > 25 ? z.words.slice(0, 25).sort() : z.words.sort(), //makes sure max of 25 words are returned
-        numOfWords: z.words.length,
-      });
-    });
-
-    return list;
+    return wordsStartingWithCharacter;
   } catch (e) {
     console.log(e);
     console.log("error while trying to generate browse list");

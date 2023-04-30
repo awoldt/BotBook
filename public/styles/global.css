@@ -188,14 +188,11 @@ h3 {
   display: block;
   width: fit-content;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 800;
+  font-size: 18px;
 }
 .browse-list-letter-divs {
   margin-bottom: 25px;
-}
-.browse-list-num-of-words {
-  font-size: 16px;
-  color: grey !important;
 }
 .other-word-link {
   background-color: rgb(120, 194, 173, 0.3);

@@ -18,7 +18,6 @@ export interface SearchResults {
 }
 
 export interface BrowseList {
-  letter: string;
+  _id: { letter: string };
   words: string[];
-  numOfWords: number;
 }
