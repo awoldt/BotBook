@@ -5,7 +5,6 @@ import {
   FetchWordData,
   GenerateBrowseList,
   GenerateExampleSentences,
-  GenerateImages,
   GenerateNewWord,
   GenerateSitemap,
   GenerateSynonymsAndAntonyms,
@@ -117,44 +116,34 @@ router.get("/api/generate-definition", async (req, res) => {
               //5. generate syn and anto
               const synAndAnto = await GenerateSynonymsAndAntonyms(word);
               if (synAndAnto !== null) {
-                //6. generate images
-                const images: string[] | null = await GenerateImages(word);
-                if (images !== null) {
-                  //7. generate reference links
-                  const links: string[] | null = await GetReferenceLinks(word);
-                  if (links !== null) {
-                    //8. save data to database
-                    const savedWord = await SaveWordToDb(
-                      word,
-                      definition,
-                      exampleSentences,
-                      history,
-                      synAndAnto,
-                      images,
-                      links
-                    );
+                //6. generate reference links
+                const links: string[] | null = await GetReferenceLinks(word);
+                if (links !== null) {
+                  //7. save data to database
+                  const savedWord = await SaveWordToDb(
+                    word,
+                    definition,
+                    exampleSentences,
+                    history,
+                    synAndAnto,
+                    links
+                  );
 
-                    if (savedWord !== null) {
-                      console.log("\nsuccessfully generated word " + word);
-                      res.status(200).json({
-                        msg: "successfully saved new word to database",
-                      });
-                      break;
-                    } else {
-                      console.log(
-                        "error while saving word to database\nattempting to generate save word again word...."
-                      );
-                      attempts++;
-                    }
+                  if (savedWord !== null) {
+                    console.log("\nsuccessfully generated word " + word);
+                    res.status(200).json({
+                      msg: "successfully saved new word to database",
+                    });
+                    break;
                   } else {
                     console.log(
-                      "error while generating refernce links\nattempting to generate links again...."
+                      "error while saving word to database\nattempting to generate save word again word...."
                     );
                     attempts++;
                   }
                 } else {
                   console.log(
-                    "error while generating images\nattempting to generate images again...."
+                    "error while generating refernce links\nattempting to generate links again...."
                   );
                   attempts++;
                 }

@@ -43,16 +43,6 @@
     {{/each}}
   {{/if}}
 
-  {{! IMAGES}}
-  <div id="generated_imgs_div" class="row">
-    {{#each word.imgs}}
-      <div class="col">
-        <img src="{{this}}" class="img-fluid generated-img" alt="{{../word.name}}"/>
-      </div>
-    {{/each}}
-
-  </div>
-
   {{! OTHER WORDS}}
   <div>
     {{#if otherWords}}

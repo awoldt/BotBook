@@ -148,7 +148,6 @@ export async function SaveWordToDb(
   exampleSentences: string[],
   historyAndUse: string[] | null,
   synAndAnto: string[][],
-  generatedImgs: string[],
   referenceLinks: string[]
 ): Promise<Word | null> {
   /* 
@@ -173,7 +172,6 @@ export async function SaveWordToDb(
         "/" +
         d.substring(0, 10).split("-")[0],
       createdOn: Date.now(),
-      imgs: generatedImgs,
       model: process.env.MODEL!,
       referenceLinks,
     };
@@ -351,78 +349,6 @@ export async function GetRecentlyAddedWords(): Promise<Word[] | null> {
   } catch (e) {
     console.log(e);
     console.log("error, could not get recently added words");
-    return null;
-  }
-}
-
-export async function GenerateImages(word: string): Promise<string[] | null> {
-  /* 
-    This function will generate an image
-    based on the word 
-    This image will then be uploaded to 
-    google cloud storage bucket and 
-    connected to a load balancer that
-    can access these images through our 
-    custom domain
-  */
-  try {
-    //this will generate 3 images
-    const data = await fetch("https://api.openai.com/v1/images/generations", {
-      method: "post",
-      headers: {
-        Authorization: "Bearer " + process.env.OPEN_AI_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: word,
-        n: 3,
-        size: "256x256",
-      }),
-    });
-    if (data.status === 200) {
-      console.log(
-        `generating images for the word ${word} and storing in google cloud`
-      );
-      const imageData = await data.json();
-
-      /* 
-      Once image has been successfully generated, 
-      upload image to google cloud storage
-      
-      */
-      try {
-        for (let i = 0; i < imageData.data.length; ++i) {
-          const googleUploadImage = await fetch(process.env.IMAGE_UPLOAD_URL!, {
-            method: "post",
-            body: JSON.stringify({
-              url: imageData.data[i].url,
-              word: `${word}_${i}`,
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          if (googleUploadImage.status === 200) {
-            console.log("successfully uploded image to google cloud");
-          } else {
-            console.log("could not upload image to google cloud :(");
-          }
-        }
-
-        return imageData.data.map((x: any, index: number) => {
-          return `https://cdn.botbook.dev/${word}_${index}.webp`;
-        });
-      } catch (e) {
-        console.log(e);
-        console.log("could not upload image to google cloud storage");
-        return null;
-      }
-    } else {
-      return null;
-    }
-  } catch (e) {
-    console.log(e);
-    console.log("error while generating image");
     return null;
   }
 }
